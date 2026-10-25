@@ -32,9 +32,10 @@ for uploaded video frames).
 | Optimized (async decode, dynamic timer, 1 decode thread) | 10.0s | 4.6s | **0.46 core** | 295 / 9.8s ≈ 30.1fps | 28–30 |
 
 The optimized build does more useful work (it no longer drops frames) with
-roughly **38% less CPU**. The important part is not only the total: decoding no
-longer runs on the main thread. In a per-thread sample the main thread was
-**~9% CPU**, the media worker ~12%, and the decoder threads the rest.
+roughly **38% less CPU per wall-second**. The important part is not only the
+total: decoding no longer runs on the main thread. In a per-thread sample the
+main thread was **~9% CPU**, the media worker ~12%, and the decoder threads the
+rest.
 
 ### Blurred background
 

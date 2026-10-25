@@ -39,7 +39,7 @@ on low-power laptops:
 
 The GIF above is a real capture of this fork running in a headless Sway session
 (no compositor tricks): a gradient video as the background, live clock, date,
-user label, and input field.
+brand label, and input field.
 
 ## Features
 
