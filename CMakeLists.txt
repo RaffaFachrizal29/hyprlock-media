@@ -188,6 +188,9 @@ if(HYPRLOCK_BUILD_TESTS)
   target_link_libraries(
     media_test PRIVATE rt Threads::Threads PkgConfig::deps PkgConfig::FFMPEG
                        OpenGL::EGL OpenGL::GLES3)
+  # media_test includes core/hyprlock.hpp, which includes generated protocol
+  # headers. Build the app first so they exist on a clean tree.
+  add_dependencies(media_test hyprlock)
 
   add_executable(
     config_test
