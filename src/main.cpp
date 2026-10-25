@@ -11,9 +11,9 @@
 static void printVersion() {
     constexpr bool ISTAGGEDRELEASE = std::string_view(HYPRLOCK_COMMIT) == HYPRLOCK_VERSION_COMMIT;
     if (ISTAGGEDRELEASE)
-        std::println("Hyprlock version v{}", HYPRLOCK_VERSION);
+        std::println("hyprlock-media v{} (hyprlock fork)", HYPRLOCK_VERSION);
     else
-        std::println("Hyprlock version v{} (commit {})", HYPRLOCK_VERSION, HYPRLOCK_COMMIT);
+        std::println("hyprlock-media v{} (hyprlock fork, commit {})", HYPRLOCK_VERSION, HYPRLOCK_COMMIT);
 }
 
 int main(int argc, char** argv, char** envp) {

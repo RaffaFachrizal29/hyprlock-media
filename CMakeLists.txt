@@ -5,7 +5,7 @@ string(STRIP ${VER_RAW} VERSION)
 
 project(
   hyprlock
-  DESCRIPTION "A gpu-accelerated screen lock for Hyprland"
+  DESCRIPTION "Animated-media fork of hyprlock"
   VERSION ${VERSION})
 
 set(CMAKE_MESSAGE_LOG_LEVEL "STATUS")
@@ -89,6 +89,7 @@ pkg_check_modules(
   hyprutils>=0.11.0
   sdbus-c++>=2.0.0
   hyprgraphics>=0.1.6)
+pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET libavformat libavcodec libavutil libswscale)
 find_library(PAM_FOUND NAMES pam libpam)
 if(PAM_FOUND)
   set(PAM_LIB ${PAM_FOUND})
@@ -110,7 +111,7 @@ message(STATUS "Found pam at ${PAM_LIB}")
 
 file(GLOB_RECURSE SRCFILES CONFIGURE_DEPENDS "src/*.cpp")
 add_executable(hyprlock ${SRCFILES})
-target_link_libraries(hyprlock PRIVATE ${PAM_LIB} rt Threads::Threads PkgConfig::deps
+target_link_libraries(hyprlock PRIVATE ${PAM_LIB} rt Threads::Threads PkgConfig::deps PkgConfig::FFMPEG
                                        OpenGL::EGL OpenGL::GLES3)
 
 # protocols
@@ -168,3 +169,36 @@ install(
   FILES ${CMAKE_SOURCE_DIR}/assets/example.conf
   DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/hypr
   RENAME hyprlock.conf)
+
+# Offscreen checks for the animated-media pipeline. Not built by default and
+# never installed.
+option(HYPRLOCK_BUILD_TESTS "Build the media pipeline test harness" OFF)
+if(HYPRLOCK_BUILD_TESTS)
+  add_executable(
+    media_test
+    tests/media_test.cpp
+    src/renderer/Media.cpp
+    src/renderer/MediaPlayer.cpp
+    src/renderer/Texture.cpp
+    src/core/Timer.cpp
+    src/helpers/MiscFunctions.cpp)
+  target_include_directories(
+    media_test PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}
+                       ${CMAKE_SOURCE_DIR}/protocols)
+  target_link_libraries(
+    media_test PRIVATE rt Threads::Threads PkgConfig::deps PkgConfig::FFMPEG
+                       OpenGL::EGL OpenGL::GLES3)
+
+  add_executable(
+    config_test
+    tests/config_test.cpp
+    src/config/ConfigManager.cpp
+    src/core/AnimationManager.cpp
+    src/helpers/Color.cpp
+    src/helpers/MiscFunctions.cpp)
+  target_include_directories(
+    config_test PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}
+                        ${CMAKE_SOURCE_DIR}/protocols)
+  target_link_libraries(config_test PRIVATE rt Threads::Threads PkgConfig::deps
+                                           PkgConfig::FFMPEG)
+endif()

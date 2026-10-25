@@ -41,6 +41,11 @@ class CRenderer {
     void                                  pushFb(GLint fb);
     void                                  popFb();
 
+    // Temporarily renders with a projection/viewport sized for a smaller
+    // offscreen target (used for reduced-resolution media blur).
+    void                                  pushProjection(const Vector2D& size);
+    void                                  popProjection();
+
     void                                  removeWidgetsFor(OUTPUTID id);
     void                                  reconfigureWidgetsFor(OUTPUTID id);
 
@@ -67,6 +72,13 @@ class CRenderer {
     PHLANIMVAR<float>  opacity;
 
     std::vector<GLint> boundFBs;
+
+    std::vector<Mat3x3>   projectionStack;
+    std::vector<Vector2D> viewportStack;
+
+    // Reused across blurFB calls. Allocating two viewport-sized float FBOs per
+    // frame is the difference between a smooth and a stuttering animated blur.
+    CFramebuffer          blurMirrors[2];
 };
 
 inline UP<CRenderer> g_pRenderer;

@@ -7,6 +7,7 @@
 #include "../../config/ConfigDataValues.hpp"
 #include "../../core/Timer.hpp"
 #include "Shadowable.hpp"
+#include "../MediaPlayer.hpp"
 #include <string>
 #include <filesystem>
 #include <unordered_map>
@@ -35,6 +36,9 @@ class CImage : public IWidget {
     void         renderUpdate();
     void         onTimerUpdate();
     void         plantTimer();
+
+    bool         loadMedia();
+    void         unloadMedia();
 
   private:
     AWP<CImage>                     m_self;
@@ -70,4 +74,12 @@ class CImage : public IWidget {
 
     ASP<CTexture>                   asset = nullptr;
     CShadowable                     shadow;
+
+    // Animated images (gif/webp/apng/mp4/webm/...).
+    UP<CMediaPlayer>                m_media;
+    bool                            m_mediaLoop  = true;
+    int                             m_mediaFPS   = 0;
+    float                           m_mediaSpeed = 1.0f;
+    float                           m_mediaScale = 0.0f;
+    uint64_t                        m_mediaSerial = 0;
 };

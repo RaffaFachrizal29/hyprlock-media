@@ -272,6 +272,10 @@ void CConfigManager::init() {
     m_config.addSpecialConfigValue("background", "reload_time", Hyprlang::INT{-1});
     m_config.addSpecialConfigValue("background", "reload_cmd", Hyprlang::STRING{""});
     m_config.addSpecialConfigValue("background", "crossfade_time", Hyprlang::FLOAT{-1.0});
+    m_config.addSpecialConfigValue("background", "media_loop", Hyprlang::INT{1});
+    m_config.addSpecialConfigValue("background", "media_fps", Hyprlang::INT{0});
+    m_config.addSpecialConfigValue("background", "media_speed", Hyprlang::FLOAT{1.0});
+    m_config.addSpecialConfigValue("background", "media_scale", Hyprlang::FLOAT{0.0});
 
     m_config.addSpecialCategory("shape", Hyprlang::SSpecialCategoryOptions{.key = nullptr, .anonymousKeyBased = true});
     m_config.addSpecialConfigValue("shape", "monitor", Hyprlang::STRING{""});
@@ -303,6 +307,10 @@ void CConfigManager::init() {
     m_config.addSpecialConfigValue("image", "reload_time", Hyprlang::INT{-1});
     m_config.addSpecialConfigValue("image", "reload_cmd", Hyprlang::STRING{""});
     m_config.addSpecialConfigValue("image", "zindex", Hyprlang::INT{0});
+    m_config.addSpecialConfigValue("image", "media_loop", Hyprlang::INT{1});
+    m_config.addSpecialConfigValue("image", "media_fps", Hyprlang::INT{0});
+    m_config.addSpecialConfigValue("image", "media_speed", Hyprlang::FLOAT{1.0});
+    m_config.addSpecialConfigValue("image", "media_scale", Hyprlang::FLOAT{0.0});
     SHADOWABLE("image");
     CLICKABLE("image");
 
@@ -425,6 +433,10 @@ std::vector<CConfigManager::SWidgetConfig> CConfigManager::getWidgetConfigs() {
                 {"reload_time", m_config.getSpecialConfigValue("background", "reload_time", k.c_str())},
                 {"reload_cmd", m_config.getSpecialConfigValue("background", "reload_cmd", k.c_str())},
                 {"crossfade_time", m_config.getSpecialConfigValue("background", "crossfade_time", k.c_str())},
+                {"media_loop", m_config.getSpecialConfigValue("background", "media_loop", k.c_str())},
+                {"media_fps", m_config.getSpecialConfigValue("background", "media_fps", k.c_str())},
+                {"media_speed", m_config.getSpecialConfigValue("background", "media_speed", k.c_str())},
+                {"media_scale", m_config.getSpecialConfigValue("background", "media_scale", k.c_str())},
             }
         });
         // clang-format on
@@ -476,6 +488,10 @@ std::vector<CConfigManager::SWidgetConfig> CConfigManager::getWidgetConfigs() {
                 {"reload_time", m_config.getSpecialConfigValue("image", "reload_time", k.c_str())},
                 {"reload_cmd", m_config.getSpecialConfigValue("image", "reload_cmd", k.c_str())},
                 {"zindex", m_config.getSpecialConfigValue("image", "zindex", k.c_str())},
+                {"media_loop", m_config.getSpecialConfigValue("image", "media_loop", k.c_str())},
+                {"media_fps", m_config.getSpecialConfigValue("image", "media_fps", k.c_str())},
+                {"media_speed", m_config.getSpecialConfigValue("image", "media_speed", k.c_str())},
+                {"media_scale", m_config.getSpecialConfigValue("image", "media_scale", k.c_str())},
                 SHADOWABLE("image"),
                 CLICKABLE("image"),
             }

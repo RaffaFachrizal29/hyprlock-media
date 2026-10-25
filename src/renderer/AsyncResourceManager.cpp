@@ -1,6 +1,7 @@
 #include "AsyncResourceManager.hpp"
 
 #include "./resources/TextCmdResource.hpp"
+#include "./Media.hpp"
 #include "../helpers/Log.hpp"
 #include "../helpers/MiscFunctions.hpp"
 #include "../core/hyprlock.hpp"
@@ -102,6 +103,11 @@ void CAsyncResourceManager::enqueueStaticAssets() {
             std::string path = std::any_cast<Hyprlang::STRING>(c.values.at("path"));
 
             if (path.empty() || path == "screenshot")
+                continue;
+
+            // Animated media is decoded by the widget itself (CMediaPlayer), it
+            // must not go through the still-image loader.
+            if (isMediaPath(path))
                 continue;
 
             requestImage(path, 0, nullptr);

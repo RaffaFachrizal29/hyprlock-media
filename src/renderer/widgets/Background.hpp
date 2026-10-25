@@ -6,6 +6,7 @@
 #include "../../helpers/Color.hpp"
 #include "../../core/Timer.hpp"
 #include "../Framebuffer.hpp"
+#include "../MediaPlayer.hpp"
 #include <hyprutils/math/Misc.hpp>
 #include <string>
 #include <unordered_map>
@@ -37,11 +38,14 @@ class CBackground : public IWidget {
     const CTexture& getScAssetTex() const;
 
     void            renderRect(CHyprColor color);
-    void            renderToFB(const CTexture& text, CFramebuffer& fb, int passes, bool applyTransform = false);
+    void            renderToFB(const CTexture& text, CFramebuffer& fb, int passes, bool applyTransform = false, const Vector2D& targetSize = {});
 
     void            onReloadTimerUpdate();
     void            plantReloadTimer();
     void            startCrossFade();
+
+    bool            loadMedia();
+    void            unloadMedia();
 
   private:
     AWP<CBackground> m_self;
@@ -82,4 +86,12 @@ class CBackground : public IWidget {
     ASP<CTimer>                     reloadTimer;
     std::filesystem::file_time_type modificationTime;
     size_t                          m_imageRevision = 0;
+
+    // Animated backgrounds (gif/webp/apng/mp4/webm/...). When set, the static
+    // image resource path is bypassed entirely.
+    UP<CMediaPlayer>                m_media;
+    bool                            m_mediaLoop  = true;
+    int                             m_mediaFPS   = 0;
+    float                           m_mediaSpeed = 1.0f;
+    float                           m_mediaScale = 0.0f;
 };

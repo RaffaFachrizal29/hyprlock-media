@@ -434,10 +434,14 @@ void CRenderer::blurFB(const CFramebuffer& outfb, SBlurParams params) {
     Mat3x3       matrix   = projMatrix.projectBox(box, HYPRUTILS_TRANSFORM_NORMAL, 0);
     Mat3x3       glMatrix = projection.copy().multiply(matrix);
 
-    CFramebuffer mirrors[2];
-    mirrors[0].alloc(outfb.m_vSize.x, outfb.m_vSize.y, true);
-    mirrors[1].alloc(outfb.m_vSize.x, outfb.m_vSize.y, true);
+    for (auto& m : blurMirrors) {
+        if (!m.isAllocated() || m.m_vSize.x != outfb.m_vSize.x || m.m_vSize.y != outfb.m_vSize.y) {
+            m.destroyBuffer();
+            m.alloc(outfb.m_vSize.x, outfb.m_vSize.y, true);
+        }
+    }
 
+    auto&         mirrors            = blurMirrors;
     CFramebuffer* currentRenderToFB = &mirrors[0];
 
     // Begin with base color adjustments - global brightness and contrast
@@ -576,6 +580,29 @@ void CRenderer::blurFB(const CFramebuffer& outfb, SBlurParams params) {
     renderTexture(box, currentRenderToFB->m_cTex, 1.0, 0, HYPRUTILS_TRANSFORM_NORMAL);
 
     glEnable(GL_BLEND);
+}
+
+void CRenderer::pushProjection(const Vector2D& size) {
+    projectionStack.push_back(projection);
+
+    GLint viewport[4] = {};
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    viewportStack.emplace_back(viewport[2], viewport[3]);
+
+    glViewport(0, 0, static_cast<GLsizei>(size.x), static_cast<GLsizei>(size.y));
+    projection = Mat3x3::outputProjection(size, HYPRUTILS_TRANSFORM_NORMAL);
+}
+
+void CRenderer::popProjection() {
+    if (projectionStack.empty())
+        return;
+
+    projection = projectionStack.back();
+    projectionStack.pop_back();
+
+    const auto SIZE = viewportStack.back();
+    viewportStack.pop_back();
+    glViewport(0, 0, static_cast<GLsizei>(SIZE.x), static_cast<GLsizei>(SIZE.y));
 }
 
 void CRenderer::pushFb(GLint fb) {
