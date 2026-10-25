@@ -159,7 +159,7 @@ Measured on the development laptop (Intel i5-7200U, HD Graphics 620, 1080p,
 
 | Scenario | Before this fork's optimizations | After |
 |---|---|---|
-| 1 output, 10s | 28.9 fps average, 8.9s CPU / 12s, decode on main thread | **~30 fps, 4.6s CPU / 10s**, main thread ~9% |
+| 1 output | 28.9 fps, 8.9s CPU over 12s, decode on main thread | **~30 fps, 4.6s CPU over 10s**, main thread ~9% |
 | 2 outputs, same background | two decoders + duplicated full-surface renders | both outputs 30fps, duplicated renders removed |
 | 1080p + 3 blur passes | full-resolution blur/decode per frame | ~30fps with half-res decode/blur |
 

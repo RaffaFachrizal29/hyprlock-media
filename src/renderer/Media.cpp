@@ -85,8 +85,8 @@ void CMediaDecoder::recomputeOutputSize() {
     }
 
     if (m_outputScale > 0 && m_outputScale != 1.0) {
-        m_outWidth  = std::max(2, static_cast<int>(std::lround(m_outWidth * m_outputScale)));
-        m_outHeight = std::max(2, static_cast<int>(std::lround(m_outHeight * m_outputScale)));
+        m_outWidth  = std::clamp(static_cast<int>(std::lround(m_outWidth * m_outputScale)), 2, std::max(2, m_srcWidth));
+        m_outHeight = std::clamp(static_cast<int>(std::lround(m_outHeight * m_outputScale)), 2, std::max(2, m_srcHeight));
     }
 }
 

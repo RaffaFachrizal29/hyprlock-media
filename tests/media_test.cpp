@@ -114,7 +114,10 @@ static void testDecoderScale(const std::string& path) {
     CHECK(decoder.nextFrame(rgba, pts, error) == CMediaDecoder::eStatus::FRAME);
     CHECK(rgba.size() == 160 * 120 * 4);
 
-    // Cap should never upscale beyond the source.
+    // Cap should never upscale beyond the source, even with media_scale > 1.
+    decoder.setOutputSize(4000, 4000, 2.0);
+    CHECK(decoder.width() == 320 && decoder.height() == 240);
+
     decoder.setOutputSize(4000, 4000);
     CHECK(decoder.width() == 320 && decoder.height() == 240);
 
