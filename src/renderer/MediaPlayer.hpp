@@ -91,6 +91,8 @@ class CMediaPlayer {
     // schedule the shared redraw timer precisely instead of a fixed interval,
     // which drifts against 1000/30 ms and drops frames periodically.
     int                nextFrameDelayMs() const;
+    // True when at least one decoded frame is already due at this instant.
+    bool               frameDueNow() const;
     double             duration() const {
         return m_duration;
     }

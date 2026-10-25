@@ -92,7 +92,7 @@ void CMediaManager::tick() {
         if (!player || !player->active())
             continue;
 
-        if (player->nextFrameDelayMs() > 5)
+        if (!player->frameDueNow())
             continue;
 
         const auto& PORT = player->outputPort();
@@ -105,9 +105,9 @@ void CMediaManager::tick() {
             duePorts.emplace_back(PORT);
     }
 
-    if (allOutputs || duePorts.empty())
+    if (allOutputs)
         g_pHyprlock->renderAllOutputs();
-    else {
+    else if (!duePorts.empty()) {
         for (const auto& PORT : duePorts)
             g_pHyprlock->renderOutput(PORT);
     }
@@ -628,4 +628,26 @@ int CMediaPlayer::nextFrameDelayMs() const {
     }
 
     return std::clamp(static_cast<int>(std::ceil(delay)), 0, 1000);
+}
+
+bool CMediaPlayer::frameDueNow() const {
+    if (!m_loaded || !m_animated || m_finished)
+        return false;
+
+    if (!m_hasTexture)
+        return true;
+
+    const auto   NOW    = steady_clock::now();
+    const double TARGET = std::chrono::duration_cast<std::chrono::duration<double>>(NOW - m_start).count() * m_options.speed;
+
+    if (m_options.async) {
+        std::lock_guard lk(m_mutex);
+        for (const auto& FRAME : m_ready) {
+            if (FRAME.pts <= TARGET + 1e-4)
+                return true;
+        }
+        return false;
+    }
+
+    return m_hasPending && (m_pendingPts - m_ptsOffset) <= TARGET + 1e-4;
 }
